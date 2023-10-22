@@ -61,7 +61,7 @@ public class GameController : ControllerBase
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error saving data");
 
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
@@ -96,21 +96,28 @@ public class GameController : ControllerBase
         return Ok(stats);
     }
 
-    private Result GetResult(Sign userSign, Sign computerSign)
+    /// <summary>
+    /// Used for evaluating winer in a game move
+    /// </summary>
+    /// <param name="firstSign">First user sign</param>
+    /// <param name="secondSign">Second user sign</param>
+    /// <returns>Returns if first user won, lost or game was a draw</returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    private Result GetResult(Sign firstSign, Sign secondSign)
     {
-        if (userSign == computerSign)
+        if (firstSign == secondSign)
         {
             return Result.Draw;
         }
 
-        switch (userSign)
+        switch (firstSign)
         {
             case Sign.Rock:
-                return (computerSign == Sign.Scissors) ? Result.Win : Result.Lose;
+                return (secondSign == Sign.Scissors) ? Result.Win : Result.Lose;
             case Sign.Paper:
-                return (computerSign == Sign.Rock) ? Result.Win : Result.Lose;
+                return (secondSign == Sign.Rock) ? Result.Win : Result.Lose;
             case Sign.Scissors:
-                return (computerSign == Sign.Paper) ? Result.Win : Result.Lose;
+                return (secondSign == Sign.Paper) ? Result.Win : Result.Lose;
             default:
                 throw new InvalidOperationException("Invalid sign");
         }
