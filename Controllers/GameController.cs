@@ -74,8 +74,8 @@ public class GameController : ControllerBase
     {
         Game? game = await gameContext.Games.Where(a => a.Id == gameId).FirstOrDefaultAsync();
 
-        if (game == null)
-            return StatusCode(StatusCodes.Status400BadRequest, $"There is no game with id : {gameId}");
+        if (game == null || game.GameFinished != null)
+            return StatusCode(StatusCodes.Status400BadRequest, $"There is no game with id : {gameId}, or the game is already finished");
 
         game.GameFinished = DateTime.Now;
 
